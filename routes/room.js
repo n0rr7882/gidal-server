@@ -37,18 +37,46 @@ router.post('/', async (req, res) => {
 
 });
 
+router.get('/join/:id', async (req, res) => {
+
+    try {
+        if (!req.user) {
+            throw new Error('로그인 해주세요.');
+        }
+        const target = await Room.findById(req.params.id);
+        if (!target.users.includes(req.user.id)) {
+            target.users.push(req.user.id);
+        }
+        const room = await Room.findById((await target.save())._id).populate('users');
+        res.status(200).send({
+            success: true,
+            message: '참여 완료',
+            room: room
+        });
+    } catch (err) {
+        res.status(400).send({
+            success: false,
+            message: err.message
+        });
+    }
+
+});
+
 router.get('/', async (req, res) => {
 
     try {
         if (!req.user) {
             throw new Error('로그인 해주세요.');
         }
-        const rooms = (await Room.find().where('users', req.user.id).populate('users')).map(room => {
-            room.users = room.users.map(user => {
-                user.distance = calcDistance(user.lastLocation, room.spot);
-                return user;
+        const selected = (await Room.find().where('users', req.user.id).populate('users'));
+        const rooms = selected.map(room => {
+            const roomObj = room.toObject();
+            roomObj.users = room.users.map(user => {
+                const userObj = user.toObject();
+                userObj.distance = calcDistance(user.lastLocation, room.spot);
+                return userObj;
             });
-            return room;
+            return roomObj;
         });
         res.status(200).send({
             success: true,
@@ -77,6 +105,7 @@ router.delete('/:id', async (req, res) => {
             message: '룸 삭제 완료',
             room: room
         });
+
     } catch (err) {
         res.status(400).send({
             success: false,
