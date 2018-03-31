@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
         }
         const newRoom = await Room.create({ users: [], spot: data });
         newRoom.users.push(req.user.id);
-        const room = await User.findById((await newRoom.save())._id).populate('users');
+        const room = await Room.findById((await newRoom.save())._id).populate('users');
         room.users = room.users.map(user => {
             const userObj = user.toObject();
             userObj.distance = calcDistance(user.lastLocation, room.spot);
