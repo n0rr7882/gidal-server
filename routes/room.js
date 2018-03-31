@@ -40,6 +40,9 @@ router.put('/join/:id', async (req, res) => {
             throw new Error('로그인 해주세요.');
         }
         const target = await Room.findById(req.params.id);
+        if (!target) {
+            throw new Error('룸을 찾을 수 없음.');
+        }
         if (!target.users.includes(req.user.id)) {
             target.users.push(req.user.id);
         }
