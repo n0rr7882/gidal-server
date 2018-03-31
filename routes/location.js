@@ -16,7 +16,7 @@ router.put('/', async (req, res) => {
             throw new Error('존재하지 않는 계정');
         }
         target.lastLocation = location;
-        const user = target.save();
+        const user = await target.save();
         res.status(200).send({
             success: true,
             message: '업데이트 완료',
