@@ -5,8 +5,12 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     username: { type: String, required: true, unique: true },
     realname: { type: String, required: true },
-    password: { type: String, required: true }
-});
+    password: { type: String, required: true },
+    lastLocation: {
+        longitude: Number,
+        latitude: Number
+    }
+}, { timestamps: true });
 
 function encryptPassword(next) {
     if (!this.isModified('password')) return next();

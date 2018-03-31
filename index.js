@@ -10,7 +10,7 @@ const routes = require('./routes');
 
 const auth = require('./tools/authentication');
 
-// require('./database/db');
+require('./database/db');
 
 const app = express();
 
