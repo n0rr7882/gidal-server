@@ -20,8 +20,9 @@ router.post('/', async (req, res) => {
         newRoom.users.push(req.user.id);
         const room = await User.findById((await newRoom.save())._id).populate('users');
         room.users = room.users.map(user => {
-            user.distance = calcDistance(user.lastLocation, room.spot);
-            return user;
+            const userObj = user.toObject();
+            userObj.distance = calcDistance(user.lastLocation, room.spot);
+            return userObj;
         });
         res.status(200).send({
             success: true,
@@ -37,7 +38,7 @@ router.post('/', async (req, res) => {
 
 });
 
-router.get('/join/:id', async (req, res) => {
+router.put('/join/:id', async (req, res) => {
 
     try {
         if (!req.user) {
@@ -47,11 +48,10 @@ router.get('/join/:id', async (req, res) => {
         if (!target.users.includes(req.user.id)) {
             target.users.push(req.user.id);
         }
-        const room = await Room.findById((await target.save())._id).populate('users');
+        await target.save();
         res.status(200).send({
             success: true,
-            message: '참여 완료',
-            room: room
+            message: '참여 완료'
         });
     } catch (err) {
         res.status(400).send({
@@ -95,15 +95,10 @@ router.get('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
 
     try {
-        const room = await Room.findByIdAndRemove(req.params.id).populate('users');
-        room.users = room.users.map(user => {
-            user.distance = calcDistance(user.lastLocation, room.spot);
-            return user;
-        });
+        await Room.remove(req.params.id);
         res.status(200).send({
             success: true,
-            message: '룸 삭제 완료',
-            room: room
+            message: '룸 삭제 완료'
         });
 
     } catch (err) {
