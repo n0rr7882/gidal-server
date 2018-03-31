@@ -304,3 +304,46 @@ request params
     "message": "룸 삭제 완료."
 }
 ```
+
+## `PUT /location`
+
+### request
+
+```http
+request headers
+    Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...
+request body
+    longitude: 126.705208
+    latitude: 37.456257
+```
+
+### response
+
+- on success
+
+```json
+{
+    "success": true,
+    "message": "업데이트 완료",
+    "user": {
+        "lastLocation": {
+            "longitude": 126.705208,
+            "latitude": 37.456257
+        },
+        "_id": "5abfdd421a7bf64ca3c32ea1",
+        "username": "testid1",
+        "realname": "유동호",
+        "createdAt": "2018-03-31T19:10:58.179Z",
+        "updatedAt": "2018-03-31T19:45:57.335Z"
+    }
+}
+```
+
+- on failure
+
+```json
+{
+    "success": true,
+    "message": "존재하지 않는 계정"
+}
+```
